@@ -37,20 +37,31 @@ var displayedProducts = [];
 var cartItems = [];
 
 function displayProducts(productList) {
+
     var productBox = document.getElementById("productBox");
     productBox.innerHTML = "";
 
     productList.forEach(function(product) {
+
         productBox.innerHTML += `
             <div class="col-md-4 col-sm-6">
                 <div class="card">
                     <img src="${product[3]}" class="card-img-top">
+
                     <div class="card-body">
+
                         <h5 class="card-title">${product[1]}</h5>
-                        <p class="price">₹${product[2]}</p>
-                        <button class="btn btn-primary w-100" onclick="addToCart(${product[0]})">
-                            Add to Cart
+
+                        <p class="price">
+                            ₹${product[2]}
+                        </p>
+
+                        <button
+                            class="btn btn-primary w-100"
+                            onclick="addToCart(${product[0]})">
+                            Add To Cart
                         </button>
+
                     </div>
                 </div>
             </div>
@@ -59,6 +70,7 @@ function displayProducts(productList) {
 }
 
 function shuffleProducts() {
+
     var copiedProducts = productData.slice();
 
     copiedProducts.sort(function() {
@@ -67,34 +79,46 @@ function shuffleProducts() {
 
     displayedProducts = copiedProducts.slice(0, 10);
 
-    document.getElementById("filterOption").value = "";
     displayProducts(displayedProducts);
 }
 
 function applyFilter() {
-    var selectedFilter = document.getElementById("filterOption").value;
 
-    if (selectedFilter === "low") {
-        displayedProducts.sort(function(firstProduct, secondProduct) {
-            return firstProduct[2] - secondProduct[2];
+    var selectedFilter =
+    document.getElementById("filterOption").value;
+
+    if(selectedFilter === "low") {
+
+        displayedProducts.sort(function(a, b) {
+            return a[2] - b[2];
         });
     }
-    else if (selectedFilter === "high") {
-        displayedProducts.sort(function(firstProduct, secondProduct) {
-            return secondProduct[2] - firstProduct[2];
+
+    else if(selectedFilter === "high") {
+
+        displayedProducts.sort(function(a, b) {
+            return b[2] - a[2];
         });
     }
-    else if (selectedFilter === "under5000") {
-        displayedProducts = productData.filter(function(product) {
+
+    else if(selectedFilter === "under5000") {
+
+        displayedProducts =
+        productData.filter(function(product) {
             return product[2] < 5000;
         });
     }
-    else if (selectedFilter === "above10000") {
-        displayedProducts = productData.filter(function(product) {
+
+    else if(selectedFilter === "above10000") {
+
+        displayedProducts =
+        productData.filter(function(product) {
             return product[2] > 10000;
         });
     }
+
     else {
+
         shuffleProducts();
         return;
     }
@@ -103,26 +127,38 @@ function applyFilter() {
 }
 
 function addToCart(productId) {
-    var selectedProduct = productData.find(function(product) {
+
+    var selectedProduct =
+    productData.find(function(product) {
+
         return product[0] === productId;
     });
 
     cartItems.push(selectedProduct);
+
     showCart();
 }
 
 function showCart() {
-    var cartCount = document.getElementById("cartCount");
-    var cartList = document.getElementById("cartList");
-    var totalPrice = document.getElementById("totalPrice");
+
+    var cartCount =
+    document.getElementById("cartCount");
+
+    var cartList =
+    document.getElementById("cartList");
+
+    var totalPrice =
+    document.getElementById("totalPrice");
 
     cartCount.innerText = cartItems.length;
+
     cartList.innerHTML = "";
 
     var totalAmount = 0;
 
     cartItems.forEach(function(product) {
-        totalAmount = totalAmount + product[2];
+
+        totalAmount += product[2];
 
         cartList.innerHTML += `
             <li class="list-group-item">
@@ -134,13 +170,31 @@ function showCart() {
     totalPrice.innerText = totalAmount;
 }
 
-document.getElementById("filterOption").addEventListener("change", applyFilter);
+var filterDropdown =
+document.getElementById("filterOption");
 
-document.addEventListener("keydown", function(event) {
-    if (event.ctrlKey && event.key.toLowerCase() === "r") {
-        event.preventDefault();
-        shuffleProducts();
+if(filterDropdown) {
+
+    filterDropdown.addEventListener(
+        "change",
+        applyFilter
+    );
+}
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if(
+            event.ctrlKey &&
+            event.key.toLowerCase() === "r"
+        ) {
+
+            event.preventDefault();
+
+            shuffleProducts();
+        }
     }
-});
+);
 
 shuffleProducts();
