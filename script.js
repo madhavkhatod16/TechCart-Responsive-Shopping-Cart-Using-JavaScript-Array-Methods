@@ -9,7 +9,6 @@ var productData = [
     [8, "Smart Watch", 3500, "https://picsum.photos/300/200?random=8"],
     [9, "Tablet", 18000, "https://picsum.photos/300/200?random=9"],
     [10, "Camera", 45000, "https://picsum.photos/300/200?random=10"],
-
     [11, "Speaker", 3000, "https://picsum.photos/300/200?random=11"],
     [12, "Power Bank", 1200, "https://picsum.photos/300/200?random=12"],
     [13, "Charger", 600, "https://picsum.photos/300/200?random=13"],
@@ -20,7 +19,6 @@ var productData = [
     [18, "Router", 2200, "https://picsum.photos/300/200?random=18"],
     [19, "Webcam", 2800, "https://picsum.photos/300/200?random=19"],
     [20, "Mic", 1700, "https://picsum.photos/300/200?random=20"],
-
     [21, "Gaming Chair", 15000, "https://picsum.photos/300/200?random=21"],
     [22, "Desk Lamp", 1100, "https://picsum.photos/300/200?random=22"],
     [23, "Backpack", 1800, "https://picsum.photos/300/200?random=23"],
@@ -39,43 +37,47 @@ var cartItems = [];
 function displayProducts(productList) {
 
     var productBox = document.getElementById("productBox");
+
     productBox.innerHTML = "";
 
-    productList.forEach(function(product) {
+    for (var i = 0; i < productList.length; i++) {
 
         productBox.innerHTML += `
-            <div class="col-md-4 col-sm-6">
-                <div class="card">
-                    <img src="${product[3]}" class="card-img-top">
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="card h-100">
+                <img src="${productList[i][3]}" class="card-img-top">
 
-                    <div class="card-body">
+                <div class="card-body">
+                    <h5 class="card-title">${productList[i][1]}</h5>
 
-                        <h5 class="card-title">${product[1]}</h5>
+                    <p class="price">
+                        ₹${productList[i][2]}
+                    </p>
 
-                        <p class="price">
-                            ₹${product[2]}
-                        </p>
-
-                        <button
-                            class="btn btn-primary w-100"
-                            onclick="addToCart(${product[0]})">
-                            Add To Cart
-                        </button>
-
-                    </div>
+                    <button
+                        class="btn btn-primary w-100"
+                        onclick="addToCart(${productList[i][0]})">
+                        Add To Cart
+                    </button>
                 </div>
             </div>
+        </div>
         `;
-    });
+    }
 }
 
 function shuffleProducts() {
 
     var copiedProducts = productData.slice();
 
-    copiedProducts.sort(function() {
-        return Math.random() - 0.5;
-    });
+    for (var i = copiedProducts.length - 1; i > 0; i--) {
+
+        var randomIndex = Math.floor(Math.random() * (i + 1));
+
+        var temp = copiedProducts[i];
+        copiedProducts[i] = copiedProducts[randomIndex];
+        copiedProducts[randomIndex] = temp;
+    }
 
     displayedProducts = copiedProducts.slice(0, 10);
 
@@ -85,38 +87,44 @@ function shuffleProducts() {
 function applyFilter() {
 
     var selectedFilter =
-    document.getElementById("filterOption").value;
+        document.getElementById("filterOption").value;
 
-    if(selectedFilter === "low") {
+    var newProducts = [];
+
+    if (selectedFilter == "low") {
 
         displayedProducts.sort(function(a, b) {
             return a[2] - b[2];
         });
     }
-
-    else if(selectedFilter === "high") {
+    else if (selectedFilter == "high") {
 
         displayedProducts.sort(function(a, b) {
             return b[2] - a[2];
         });
     }
+    else if (selectedFilter == "under5000") {
 
-    else if(selectedFilter === "under5000") {
+        for (var i = 0; i < productData.length; i++) {
 
-        displayedProducts =
-        productData.filter(function(product) {
-            return product[2] < 5000;
-        });
+            if (productData[i][2] < 5000) {
+                newProducts.push(productData[i]);
+            }
+        }
+
+        displayedProducts = newProducts;
     }
+    else if (selectedFilter == "above10000") {
 
-    else if(selectedFilter === "above10000") {
+        for (var i = 0; i < productData.length; i++) {
 
-        displayedProducts =
-        productData.filter(function(product) {
-            return product[2] > 10000;
-        });
+            if (productData[i][2] > 10000) {
+                newProducts.push(productData[i]);
+            }
+        }
+
+        displayedProducts = newProducts;
     }
-
     else {
 
         shuffleProducts();
@@ -128,10 +136,8 @@ function applyFilter() {
 
 function addToCart(productId) {
 
-    var selectedProduct =
-    productData.find(function(product) {
-
-        return product[0] === productId;
+    var selectedProduct = productData.find(function(product) {
+        return product[0] == productId;
     });
 
     cartItems.push(selectedProduct);
@@ -142,13 +148,13 @@ function addToCart(productId) {
 function showCart() {
 
     var cartCount =
-    document.getElementById("cartCount");
+        document.getElementById("cartCount");
 
     var cartList =
-    document.getElementById("cartList");
+        document.getElementById("cartList");
 
     var totalPrice =
-    document.getElementById("totalPrice");
+        document.getElementById("totalPrice");
 
     cartCount.innerText = cartItems.length;
 
@@ -156,45 +162,33 @@ function showCart() {
 
     var totalAmount = 0;
 
-    cartItems.forEach(function(product) {
+    for (var i = 0; i < cartItems.length; i++) {
 
-        totalAmount += product[2];
+        totalAmount += cartItems[i][2];
 
         cartList.innerHTML += `
-            <li class="list-group-item">
-                ${product[1]} - ₹${product[2]}
-            </li>
+        <li class="list-group-item">
+            ${cartItems[i][1]} - ₹${cartItems[i][2]}
+        </li>
         `;
-    });
+    }
 
     totalPrice.innerText = totalAmount;
 }
 
-var filterDropdown =
-document.getElementById("filterOption");
+document
+    .getElementById("filterOption")
+    .addEventListener("change", applyFilter);
 
-if(filterDropdown) {
+document.addEventListener("keydown", function(event) {
 
-    filterDropdown.addEventListener(
-        "change",
-        applyFilter
-    );
-}
-
-document.addEventListener(
-    "keydown",
-    function(event) {
-
-        if(
-            event.ctrlKey &&
-            event.key.toLowerCase() === "r"
-        ) {
-
-            event.preventDefault();
-
-            shuffleProducts();
-        }
+    if (
+        event.ctrlKey &&
+        event.key.toLowerCase() == "r"
+    ) {
+        event.preventDefault();
+        shuffleProducts();
     }
-);
+});
 
 shuffleProducts();
