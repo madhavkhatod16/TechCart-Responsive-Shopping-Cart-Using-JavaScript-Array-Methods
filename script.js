@@ -62,7 +62,7 @@ function shuffleProducts() {
     var copiedProducts = productData.slice();
 
     copiedProducts.sort(function() {
-        return Math.random();
+        return Math.random() - 0.5;
     });
 
     displayedProducts = copiedProducts.slice(0, 10);
